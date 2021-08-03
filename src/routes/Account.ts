@@ -59,7 +59,7 @@ AccountRouter.route('/login').post(async (req, res) => {
   let session = new Session({
     sessionString: sessionToken,
     userId: user._id,
-    ip: req.socket.remoteAddress,
+    ip: req.ip,
     rememberMe: false,
     expiresAt: now
       .add(8, req.body.rememberMe ? 'days' : 'hours')

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import moment from 'moment'
 import Session from '../models/Session'
 import User from '../models/User'
 
@@ -10,12 +11,13 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         success: false,
         message: 'Authentication required',
         errors: [
-          'We could not find a session request in your request, please recheck your status and try again.',
+          'We could not find a session request in your request, please recheck your status and try again',
         ],
       })
     }
     if (!sessionToken.startsWith('Bearer ')) {
       return res.status(401).json({
+          status: 401,
           success: false,
           message: 'Authentication required',
           errors: [
@@ -26,9 +28,38 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     let sess = await Session.findOne({
       sessionString: sessionToken
     }).exec()
+    if (!sess) {
+      return res.status(401).json({
+        status: 401,
+        success: false,
+        message: 'Authentication required',
+        errors: ['Invalid session'],
+      })
+    }
     let user = await User.findOne({
       _id: sess.userId
     }).exec()
+    if (!user) {
+      await sess.remove()
+      return res.status(401).json({
+        status: 401,
+        success: false,
+        message: 'authentication required',
+        errors: [
+          'Something bad happened when parsing your session, contact an admin',
+        ],
+      })
+    }
+    let now = moment()
+    if (sess.expiresAt && moment(sess.expiresAt).diff(now) < 0) {
+      await sess.remove()
+      return res.status(401).json({
+        status: 401,
+        success: false,
+        message: 'Authentication required',
+        errors: ['Your session has expired, please log in again'],
+      })
+    }
     req.user = user
     req.loggedIn = true
     return next()
