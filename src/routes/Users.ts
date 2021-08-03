@@ -11,7 +11,7 @@ async function getUser(req: express.Request) {
   return user
 }
 
-UsersRouter.route('/').all((req, res) => {
+UsersRouter.route('/').all(async (req, res) => {
   res.status(200).json({
     status: 200,
     route: '/users',
@@ -19,6 +19,10 @@ UsersRouter.route('/').all((req, res) => {
   })
 })
 
+UsersRouter.route('/:id').get(async (req, res) => {
+  let user = await getUser(req)
+  console.log(user)
+})
 
 
 export default UsersRouter
