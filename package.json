@@ -18,8 +18,13 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@types/cors": "^2.8.12",
+    "argon2": "^0.28.2",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
+    "moment": "^2.29.1",
     "mongoose": "^5.13.5"
   }
 }

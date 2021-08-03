@@ -8,7 +8,8 @@ const UserSchema: Schema = new Schema({
     unique: true
   },
   password: String,
-  joinedAt: Date
+  joinedAt: Date,
+  emailVerified: Boolean
 })
 
 export default mongoose.model('user', UserSchema)
