@@ -58,7 +58,7 @@ AccountRouter.route('/login').post(async (req, res) => {
   let sessionToken = 'Bearer ' + crypto.randomBytes(96).toString('base64')
   let session = new Session({
     sessionString: sessionToken,
-    userId: user.id,
+    userId: user._id,
     ip: req.socket.remoteAddress,
     rememberMe: false,
     expiresAt: now
@@ -100,15 +100,16 @@ AccountRouter.route('/register').post(async (req, res) => {
       type: argon2id,
     })
     let user = new User({
-        name: req.body.username,
-        email: req.body.email,
-        password: hashedPassword,
-        joinedAt: new Date(),
+      name: req.body.username,
+      email: req.body.email,
+      description: 'This user likes to keep quiet.',
+      password: hashedPassword,
+      joinedAt: new Date(),
     })
     await user.save()
     res.status(200).json({
-        success: true,
-        message: 'Successfully created your account!',
+      success: true,
+      message: 'Successfully created your account!',
     })
 })
 

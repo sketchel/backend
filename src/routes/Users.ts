@@ -21,7 +21,12 @@ UsersRouter.route('/').all(async (req, res) => {
 
 UsersRouter.route('/:id').get(async (req, res) => {
   let user = await getUser(req)
-  console.log(user)
+  return res.status(200).json({
+    success: true,
+    status: 200,
+    message: 'done',
+    user: user,
+  })
 })
 
 

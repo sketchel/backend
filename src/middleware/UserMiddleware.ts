@@ -3,10 +3,8 @@ import Session from '../models/Session'
 import User from '../models/User'
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    let sessionToken
-    if (req.headers.authorization) sessionToken = req.headers.authorization
-    if (req.query && req.query.auth) sessionToken = req.query.auth
-    if (req.body && req.body.auth) sessionToken = req.body.auth
+    let sessionToken: string | undefined
+    if (req.get('Authorization')) sessionToken = req.get('Authorization')
     if (!sessionToken) {
       return res.status(401).json({
         success: false,
@@ -28,11 +26,9 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     let sess = await Session.findOne({
       sessionString: sessionToken
     }).exec()
-    console.log(sess)
     let user = await User.findOne({
-      id: sess.userId
+      _id: sess.userId
     }).exec()
-    console.log(user)
     req.user = user
     req.loggedIn = true
     return next()
