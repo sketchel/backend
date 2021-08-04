@@ -111,7 +111,8 @@ AccountRouter.route('/register').post(async (req, res) => {
       lowercaseEmail: req.body.email.toLowerCase(),
       followers: [],
       following: [],
-      settings: {},
+      private: false,
+      nsfw: false
       rank: 'default',
       email: req.body.email,
       description: 'This user likes to keep quiet.',
