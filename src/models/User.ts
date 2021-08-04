@@ -7,6 +7,9 @@ const UserSchema: Schema = new Schema({
     required: true,
     unique: true
   },
+  lowercaseName: String,
+  lowercaseEmail: String,
+  rank: String,
   description: String,
   password: String,
   avatar: String,

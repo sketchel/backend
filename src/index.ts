@@ -1,7 +1,8 @@
 import { 
     RootRouter,
     AccountRouter,
-    UsersRouter   
+    UsersRouter,   
+    ApiRouter
 } from './routes'
 import express from 'express'
 import cors from 'cors'
@@ -13,6 +14,7 @@ app.use(cors())
 new db()
 
 app.use('/', RootRouter)
+app.use('/api', ApiRouter)
 app.use('/account', AccountRouter)
 app.use('/users', UsersRouter)
 

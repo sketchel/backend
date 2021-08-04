@@ -2,6 +2,8 @@ import express, { Router } from 'express'
 import bodyParser from 'body-parser'
 import { authMiddleware } from '../middleware/UserMiddleware'
 
+import Session from '../models/Session'
+
 const UsersRouter = Router()
 UsersRouter.use(bodyParser.json())
 UsersRouter.use(authMiddleware)
@@ -29,5 +31,19 @@ UsersRouter.route('/:id').get(async (req, res) => {
   })
 })
 
+UsersRouter.route('/logout').get(async (req, res) => {
+  let sess = await Session.findOne({
+    sessionString: req.get('Authorization')
+  }).exec()
+  await sess.remove()
+  return res.status(200).json({
+    status: 200,
+    success: true,
+    message: 'Authentication required',
+    errors: [
+      'Successfully removed your session',
+    ],
+  })
+})
 
 export default UsersRouter

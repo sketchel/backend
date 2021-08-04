@@ -34,8 +34,8 @@ AccountRouter.route('/login').post(async (req, res) => {
   }
   let user = await User.findOne({
     [req.body.username.includes('@')
-      ? 'email'
-      : 'name']: req.body.username
+      ? 'lowercaseEmail'
+      : 'lowercaseName']: req.body.username.toLowerCase()
   }).exec()
   if (!user) {
     return res.status(400).json({
@@ -70,6 +70,7 @@ AccountRouter.route('/login').post(async (req, res) => {
     success: true,
     message: 'Logged in successfully',
     session: sessionToken,
+    user: user._id
   })
 })
 
@@ -77,9 +78,13 @@ AccountRouter.route('/register').post(async (req, res) => {
     let errors = []
     if (!req.body) errors.push('No body')
     if (!req.body.username) errors.push('You must supply a username')
+    let username = req.body.username
     if (!req.body.email) errors.push('You must supply a email')
     if (!req.body.password) errors.push('You must supply a password')
+    if (!req.body.confirmPassword) errors.push('You must supply a confirmation password')
+    if (req.body.confirmPassword !== req.body.password) errors.push('The confirmation password must match your password.')
     if (!req.body.username.match(usernameRegex)) errors.push('Your username must be alphanumeric')
+    if (username.length <= 2) errors.push('Your username\'s too short.')
     if (!req.body.email.match(emailRegex)) errors.push('Your email is invalid')
     let emails = await User.find({
       email: req.body.email,
@@ -101,6 +106,9 @@ AccountRouter.route('/register').post(async (req, res) => {
     })
     let user = new User({
       name: req.body.username,
+      lowercaseName: req.body.username.toLowerCase(),
+      lowercaseEmail: req.body.email.toLowerCase(),
+      rank: 'default',
       email: req.body.email,
       description: 'This user likes to keep quiet.',
       password: hashedPassword,

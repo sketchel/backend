@@ -44,7 +44,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       return res.status(401).json({
         status: 401,
         success: false,
-        message: 'authentication required',
+        message: 'Authentication required',
         errors: [
           'Something bad happened when parsing your session, contact an admin',
         ],
