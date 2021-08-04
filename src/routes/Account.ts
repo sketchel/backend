@@ -112,7 +112,7 @@ AccountRouter.route('/register').post(async (req, res) => {
       followers: [],
       following: [],
       private: false,
-      nsfw: false
+      nsfw: false,
       rank: 'default',
       email: req.body.email,
       description: 'This user likes to keep quiet.',
