@@ -78,6 +78,7 @@ AccountRouter.route('/register').post(async (req, res) => {
     let errors = []
     if (!req.body) errors.push('No body')
     if (!req.body.username) errors.push('You must supply a username')
+    if (!req.body.tosCheck) errors.push('You must agree to the Terms of Service')
     let username = req.body.username
     if (!req.body.email) errors.push('You must supply a email')
     if (!req.body.password) errors.push('You must supply a password')
@@ -110,6 +111,7 @@ AccountRouter.route('/register').post(async (req, res) => {
       lowercaseEmail: req.body.email.toLowerCase(),
       followers: [],
       following: [],
+      settings: {},
       rank: 'default',
       email: req.body.email,
       description: 'This user likes to keep quiet.',

@@ -11,6 +11,7 @@ const UserSchema: Schema = new Schema({
   lowercaseEmail: String,
   following: Array,
   followers: Array,
+  settings: Object,
   rank: String,
   description: String,
   password: String,
