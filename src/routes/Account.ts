@@ -108,6 +108,8 @@ AccountRouter.route('/register').post(async (req, res) => {
       name: req.body.username,
       lowercaseName: req.body.username.toLowerCase(),
       lowercaseEmail: req.body.email.toLowerCase(),
+      followers: [],
+      following: [],
       rank: 'default',
       email: req.body.email,
       description: 'This user likes to keep quiet.',

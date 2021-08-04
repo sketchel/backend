@@ -40,7 +40,9 @@ ApiRouter.route('/user/:query')
             description: user.description,
             avatar: user.avatar,
             joinedAt: user.joinedAt,
-            rank: user.rank
+            rank: user.rank,
+            following: user.following,
+            followers: user.followers
         }
         return res.status(200).json({
             success: true,

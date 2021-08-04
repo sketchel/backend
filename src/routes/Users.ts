@@ -8,7 +8,7 @@ const UsersRouter = Router()
 UsersRouter.use(bodyParser.json())
 UsersRouter.use(authMiddleware)
 
-async function getUser(req: express.Request) {
+async function getUser(req: express.Request) { // @ts-ignore
   let user = req.user
   return user
 }

@@ -9,6 +9,8 @@ const UserSchema: Schema = new Schema({
   },
   lowercaseName: String,
   lowercaseEmail: String,
+  following: Array,
+  followers: Array,
   rank: String,
   description: String,
   password: String,

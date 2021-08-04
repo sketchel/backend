@@ -59,8 +59,8 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         message: 'Authentication required',
         errors: ['Your session has expired, please log in again'],
       })
-    }
-    req.user = user
+    } // @ts-ignore
+    req.user = user // @ts-ignore
     req.loggedIn = true
     return next()
 }
