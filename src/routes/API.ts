@@ -36,6 +36,7 @@ ApiRouter.route('/user/:query')
             }
         }
         const publicObject = {
+            id: user._id,
             name: user.name,
             description: user.description,
             avatar: user.avatar,

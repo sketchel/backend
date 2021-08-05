@@ -36,6 +36,70 @@ UsersRouter.route('/:id').get(async (req, res) => {
 const usernameRegex = /^[a-z0-9]+$/i
 const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/
 
+function removeA (arr) {
+  let what
+  const a = arguments
+  let L = a.length
+  let ax
+  while (L > 1 && arr.length) {
+    what = a[--L]
+    while ((ax = arr.indexOf(what)) !== -1) {
+      arr.splice(ax, 1)
+    }
+  }
+  return arr
+}
+
+UsersRouter.route('/interact/:id').post(async (req, res) => {
+  let errors = []
+  if (!req.body) errors.push('No body') // @ts-ignore
+  if (!req.params.id) errors.push('No id')
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'errors',
+      errors
+    })
+  }
+  let id: any = req.params.id
+  let u2 = await User.findOne({
+    $or: [
+      { _id: id },
+      { lowercaseName: id.toLowerCase() }
+    ]
+  }).exec()
+  let u1 = await User.findOne({ // @ts-ignore
+    _id: req.user._id
+  }).exec()
+  if (!u2) {
+    return res.status(404).json({
+      success: false,
+      status: 404,
+      message: 'errors',
+      errors: [
+        'Invalid user'
+      ]
+    })
+  }
+  if (u1.following.includes(u2._id)) { // @ts-ignore
+    let i = removeA(u1.following, u2._id)
+    u1.following = i // @ts-ignore
+    let i2 = removeA(u2.followers, u1._id)
+    u1.following = i2 
+  } else {
+    u1.following.push(u2._id)
+    u2.followers.push(u1._id)
+  }
+  u1.save()
+  u2.save()
+  return res.status(200).json({
+    success: true,
+    status: 200,
+    message: 'done'
+  })
+})
+
 UsersRouter.route('/profile').post(async (req, res) => {
   let errors = []
   if (!req.body) errors.push('No body')
