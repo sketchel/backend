@@ -7,7 +7,8 @@ const PostSchema: Schema = new Schema({
   likes: Number,
   dislikes: Number,
   views: Number,
-  image: String
+  image: String,
+  createdAt: Date
 })
 
 export default mongoose.model('post', PostSchema)
