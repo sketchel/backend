@@ -19,12 +19,16 @@
   },
   "dependencies": {
     "@types/cors": "^2.8.12",
+    "@types/node-fetch": "^2.5.12",
     "argon2": "^0.28.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "data-uri-to-buffer": "^3.0.1",
     "dotenv": "^10.0.0",
+    "form-data": "^4.0.0",
     "moment": "^2.29.1",
-    "mongoose": "^5.13.5"
+    "mongoose": "^5.13.5",
+    "node-fetch": "^2.6.1"
   }
 }

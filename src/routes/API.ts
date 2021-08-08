@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import bodyParser from 'body-parser'
 import User from '../models/User'
+import Post from '../models/Post'
 
 const ApiRouter = Router()
 ApiRouter.use(bodyParser.json())
@@ -49,6 +50,40 @@ ApiRouter.route('/user/:query')
             success: true,
             status: 200,
             user: publicObject,
+            message: 'done'
+        })
+    })
+
+ApiRouter.route('/post/:query')
+    .get(async (req, res) => {
+        let post = await Post.findOne({
+            _id: req.params.query
+        }).exec()
+        if (!post) {
+            return res.status(400).json({
+                success: false,
+                status: 400,
+                message: 'This post does not exist',
+                errors: [
+                    'Could not find this post'
+                ]
+            })
+        }
+        const publicObject = {
+            id: post._id,
+            author: post.author,
+            title: post.title,
+            description: post.description,
+            image: post.image,
+            createdAt: post.createdAt,
+            views: post.views,
+            likes: post.likes,
+            dislikes: post.dislikes
+        }
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            post: publicObject,
             message: 'done'
         })
     })

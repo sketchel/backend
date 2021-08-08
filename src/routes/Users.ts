@@ -2,9 +2,13 @@ import express, { Router } from 'express'
 import bodyParser from 'body-parser'
 import argon2, { argon2id } from 'argon2'
 import { authMiddleware } from '../middleware/UserMiddleware'
+import FormData from 'form-data'
+import dataUriToBuffer from 'data-uri-to-buffer'
+import fetch from 'node-fetch'
 
 import Session from '../models/Session'
 import User from '../models/User'
+import Post from '../models/Post'
 
 const UsersRouter = Router()
 UsersRouter.use(bodyParser.json())
@@ -50,6 +54,83 @@ function removeA (arr) {
   }
   return arr
 }
+
+UsersRouter.route('/upload').post(async (req, res) => {
+  let errors = []
+  if (!req.body) errors.push('No body') // @ts-ignore
+  if (!req.body.uri) errors.push('No data')
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'errors',
+      errors
+    })
+  }
+  let title = req.body.title || 'Untitled'
+  let description = req.body.description || 'none'
+  var file = new FormData()
+  const buffer = dataUriToBuffer(req.body.uri)
+  file.append('file', buffer)
+  let result = await fetch(process.env.CDN + '/upload', {
+    method: 'POST',
+    body: file, // @ts-ignore
+    headers: {
+      Authorization: process.env.CDN_AUTH
+    }
+  })
+  result = await result.json()
+  let post = new Post({ // @ts-ignore
+    author: req.user.id, // @ts-ignore
+    image: process.env.CDN + '/get/' + result.id,
+    title: title,
+    description: description,
+    likes: 0,
+    dislikes: 0,
+    views: 0,
+    createdAt: new Date()
+  })
+  await post.save()
+  return res.status(200).json({
+    status: 200,
+    success: true,
+    post: post
+  })
+})
+
+UsersRouter.route('/view/:id').post(async (req, res) => {
+  let errors = []
+  if (!req.body) errors.push('No body') // @ts-ignore
+  if (!req.params.id) errors.push('No id')
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'errors',
+      errors
+    })
+  }
+  let post = await Post.findOne({ // @ts-ignore
+    _id: req.params.id
+  }).exec()
+  if (!post) {
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'errors',
+      errors: [
+        'Post not found'
+      ]
+    })
+  }
+  post.views++
+  await post.save()
+  return res.status(200).json({
+    success: true,
+    status: 200,
+    message: 'done',
+  })
+})
 
 UsersRouter.route('/interact/:id').post(async (req, res) => {
   let errors = []
