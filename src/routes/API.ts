@@ -15,6 +15,34 @@ ApiRouter.route('/').all((req, res) => {
   })
 })
 
+ApiRouter.route('/posts/:query').get(async (req, res) => {
+  let user = await User.findOne({
+    $or: [
+      { _id: req.params.query },
+      { lowercaseName: req.params.query.toLowerCase() }
+    ]
+  }).exec()
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'This user does not exist',
+      errors: [
+        'Could not find this user'
+      ]
+    })
+  }
+  let posts = await Post.find({
+    author: user._id
+  }).exec()
+  return res.status(200).json({
+    success: true,
+    status: 200,
+    message: 'done',
+    posts: posts
+  })
+})
+
 ApiRouter.route('/user/:query')
     .get(async (req, res) => {
         let user = await User.findOne({

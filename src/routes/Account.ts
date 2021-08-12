@@ -118,6 +118,7 @@ AccountRouter.route('/register').post(async (req, res) => {
       description: 'This user likes to keep quiet.',
       password: hashedPassword,
       joinedAt: new Date(),
+      avatar: 'https://cdn.sketchel.com/get/2,0a205da29e.png'
     })
     await user.save()
     res.status(200).json({
