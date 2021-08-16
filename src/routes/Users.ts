@@ -204,6 +204,35 @@ UsersRouter.route('/profile').post(async (req, res) => {
 
 })
 
+UsersRouter.route('/avatar').post(async (req, res) => {
+  let errors = []
+  if (!req.body) errors.push('No body')
+  if (!req.body.avatar) errors.push('No avatar')
+  let post = await Post.findOne({
+    _id: req.body.avatar
+  }).exec()
+  let user = await User.findOne({ // @ts-ignore
+    _id: req.user._id
+  }).exec()  
+  console.log(req.body, post, user)
+  if (!post) errors.push('Invalid post')
+  console.log(errors)
+  if (errors.length > 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'errors',
+      errors
+    })
+  }
+  user.avatar = post.image + '.png'
+  user.save()
+  return res.status(200).json({
+    success: true,
+    message: 'done',
+    status: 200
+  })
+})
+
 UsersRouter.route('/settings').post(async (req, res) => {
   let errors = []
   if (!req.body) errors.push('No body')

@@ -17,7 +17,7 @@ ApiRouter.route('/').all((req, res) => {
 
 ApiRouter.route('/posts/:query').get(async (req, res) => {
   let user = await User.findOne({
-    lowercaseName: req.params.query
+    lowercaseName: req.params.query.toLowerCase()
   }).exec()
   if (!user) {
     user = await User.findOne({ // Allow people to search for people using IDs.
@@ -49,39 +49,39 @@ ApiRouter.route('/posts/:query').get(async (req, res) => {
 ApiRouter.route('/user/:query')
     .get(async (req, res) => {
         let user = await User.findOne({
-            lowercaseName: req.params.query
+          lowercaseName: req.params.query.toLowerCase()
         }).exec()
         if (!user) {
             user = await User.findOne({ // Allow people to search for people using IDs.
-                _id: req.params.query
+              _id: req.params.query
             }).exec()
-                .catch(() => {})
+              .catch(() => {})
             if (!user) {
                 return res.status(400).json({
-                    success: false,
-                    status: 400,
-                    message: 'This user does not exist',
-                    errors: [
-                        'Could not find this user'
-                    ]
+                  success: false,
+                  status: 400,
+                  message: 'This user does not exist',
+                  errors: [
+                    'Could not find this user'
+                  ]
                 })
             }
         }
         const publicObject = {
-            id: user._id,
-            name: user.name,
-            description: user.description,
-            avatar: user.avatar,
-            joinedAt: user.joinedAt,
-            rank: user.rank,
-            following: user.following,
-            followers: user.followers
+          id: user._id,
+          name: user.name,
+          description: user.description,
+          avatar: user.avatar,
+          joinedAt: user.joinedAt,
+          rank: user.rank,
+          following: user.following,
+          followers: user.followers
         }
         return res.status(200).json({
-            success: true,
-            status: 200,
-            user: publicObject,
-            message: 'done'
+          success: true,
+          status: 200,
+          user: publicObject,
+          message: 'done'
         })
     })
 
