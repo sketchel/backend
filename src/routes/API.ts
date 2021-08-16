@@ -17,20 +17,23 @@ ApiRouter.route('/').all((req, res) => {
 
 ApiRouter.route('/posts/:query').get(async (req, res) => {
   let user = await User.findOne({
-    $or: [
-      { _id: req.params.query },
-      { lowercaseName: req.params.query.toLowerCase() }
-    ]
+    lowercaseName: req.params.query
   }).exec()
   if (!user) {
-    return res.status(400).json({
-      success: false,
-      status: 400,
-      message: 'This user does not exist',
-      errors: [
-        'Could not find this user'
-      ]
-    })
+    user = await User.findOne({ // Allow people to search for people using IDs.
+      _id: req.params.query
+    }).exec()
+      .catch(() => {})
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: 'This user does not exist',
+        errors: [
+          'Could not find this user'
+        ]
+      })
+    }
   }
   let posts = await Post.find({
     author: user._id

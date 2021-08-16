@@ -173,12 +173,15 @@ UsersRouter.route('/interact/:id').post(async (req, res) => {
     u1.following.push(u2._id)
     u2.followers.push(u1._id)
   }
+  let following = false
+  if (u1.following.includes(u2._id)) following = true
   u1.save()
   u2.save()
   return res.status(200).json({
     success: true,
     status: 200,
-    message: 'done'
+    message: 'done',
+    following: following
   })
 })
 
