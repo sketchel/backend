@@ -214,9 +214,7 @@ UsersRouter.route('/avatar').post(async (req, res) => {
   let user = await User.findOne({ // @ts-ignore
     _id: req.user._id
   }).exec()  
-  console.log(req.body, post, user)
   if (!post) errors.push('Invalid post')
-  console.log(errors)
   if (errors.length > 0) {
     return res.status(400).json({
       success: false,
