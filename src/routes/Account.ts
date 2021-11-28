@@ -41,7 +41,7 @@ AccountRouter.route('/login').post(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'errors',
-      errors: ['Username or password is invalid 1'],
+      errors: ['Username or password is invalid'],
     })
   }
   let passwordValid = await argon2.verify(user.password, req.body.password, {
@@ -51,7 +51,7 @@ AccountRouter.route('/login').post(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'errors',
-      errors: ['Username or password is invalid 2'],
+      errors: ['Username or password is invalid'],
     })
   }
   let now = moment()
